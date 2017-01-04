@@ -7,8 +7,48 @@
 //
 
 #import "CVWebViewController.h"
+#import "CVWebViewController+ImageHelper.h"
 
 @implementation CVWebViewController
+
+
+#pragma mark - Save image callback
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
+{
+    NSString *message = @"Succeed";
+    
+    if (error) {
+        message = @"Fail";
+    }
+    NSLog(@"save result :%@", message);
+}
+#pragma mark - FSActionSheetDelegate
+- (void)FSActionSheet:(FSActionSheet *)actionSheet selectedIndex:(NSInteger)selectedIndex
+{
+//    [self stringByEvaluatingJavaScriptFromString:@"document.documentElement.style.webkitUserSelect='text';"];
+    
+    switch (selectedIndex) {
+        case SelectItemSaveImage:
+        {
+            UIImageWriteToSavedPhotosAlbum(self.image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+        }
+            break;
+        case SelectItemQRExtract:
+        {
+            NSURL *qrUrl = [NSURL URLWithString:self.qrCodeString];
+            //open with safari
+            if ([[UIApplication sharedApplication] canOpenURL:qrUrl]) {
+                [[UIApplication sharedApplication] openURL:qrUrl];
+            }
+            // open in inner webview
+            //[self.webView loadRequest:[NSURLRequest requestWithURL:qrUrl]];
+        }
+            break;
+            
+        default:
+            break;
+    }
+}
 
 - (void)viewDidLoad
 {
@@ -19,6 +59,34 @@
     self.url = [self cleanURL:[NSURL URLWithString:urlString]];
     
     self.webView.delegate = self;
+    
+    
+    self.webView.touchCB = ^( NSString*__nullable imgUrl, UIImage*__nonnull image, NSString*__nullable qrCodeString){
+        
+        self.qrCodeString = qrCodeString;
+        self.image = image;
+        
+                FSActionSheet *actionSheet = nil;
+        
+                if (qrCodeString) {
+        
+                    actionSheet = [[FSActionSheet alloc] initWithTitle:nil
+                                                              delegate:self
+                                                     cancelButtonTitle:@"Cancel"
+                                                highlightedButtonTitle:nil
+                                                     otherButtonTitles:@[@"Save Image", @"Extract QR code"]];
+        
+                } else {
+        
+                    actionSheet = [[FSActionSheet alloc] initWithTitle:nil
+                                                              delegate:self
+                                                     cancelButtonTitle:@"Cancel"
+                                                highlightedButtonTitle:nil
+                                                     otherButtonTitles:@[@"Save Image"]];
+                }
+                [actionSheet show];
+        
+    };
     
     [self.webView loadRequest:[[NSURLRequest alloc] initWithURL:self.url]];
 }
