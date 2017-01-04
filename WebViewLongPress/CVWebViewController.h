@@ -7,12 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FSActionSheet.h"
 
+typedef NS_ENUM(NSInteger, SelectItem) {
+    SelectItemSaveImage,
+    SelectItemQRExtract
+};
 
-@interface CVWebViewController : UIViewController <UIWebViewDelegate>
+@interface CVWebViewController : UIViewController <UIWebViewDelegate, FSActionSheetDelegate>
 
 @property (nonatomic, strong) NSURL *url;
 
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
+
+
+@property(strong, nonatomic)NSString* qrCodeString;
+@property(strong, nonatomic)UIImage* image;
 
 @end

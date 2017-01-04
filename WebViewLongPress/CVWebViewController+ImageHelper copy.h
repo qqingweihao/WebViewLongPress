@@ -28,3 +28,15 @@
 @property (strong, nonatomic) UIImage *image;
 
 @end
+
+
+
+
+
+
+
+typedef  void(^WebViewLongTouchCb)( NSString*__nullable imgUrl, UIImage*__nonnull image, NSString*__nullable qrCodeString);
+@interface UIWebView (ImageHelper)<UIWebViewDelegate, UIGestureRecognizerDelegate, FSActionSheetDelegate>
+@property(nonatomic, copy, nullable) WebViewLongTouchCb touchCB;
+@end
+

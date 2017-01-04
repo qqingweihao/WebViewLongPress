@@ -359,3 +359,26 @@ static const NSTimeInterval KLongGestureInterval = 0.8f;
 }
 
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+#import <objc/runtime.h>
+static char const * const K_WebViewLongTouchCb;
+@implementation UIWebView (ImageHelper)
+-(WebViewLongTouchCb)touchCB{
+    return objc_getAssociatedObject(self,  &K_WebViewLongTouchCb);
+}
+-(void)setTouchCB:(WebViewLongTouchCb)touchCB{
+    objc_setAssociatedObject(self, &K_WebViewLongTouchCb, touchCB, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+@end
+
